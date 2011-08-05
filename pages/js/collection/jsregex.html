@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>JavaScript Pattern Matching with Regular Expressions</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				font: normal normal normal 13px/1.231 arial, helvetica, clean, sans-serif;
+			}
+			#title {
+				text-align: center;
+			}
+			#doc {
+				margin: 10px;
+			}
+			#doc table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#doc th {
+				background-color: lightgray;
+			}
+			#doc th, #doc td {
+				padding: 3px;
+				border: 1px solid black;
+			}
+			.highlight {
+				color: green;
+			}
+			.blue {
+				color: blue;
+			}
+			.bgcolor {
+				background-color: #e8f2fe;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="title"><h1>JavaScript Pattern Matching with Regular Expressions</h2></div>
+		<div id="doc">
+			<br>
+			<p>
+				<div>A number of punctuation characters have special meanings in regular expressions. They are:(<span class="blue">在正则表达式中，许多标点符号具有特殊的含义。它们是：</span>)</div>
+				<div class="highlight"><pre class="bgcolor">^ $ . * + ? = ! : | \ / ( ) [ ] { }</pre></div>
+			</p>
+			<br/>
+			<h3>1、Regular-expression literal characters(正则表达式的直接量字符)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Matches<br><span class="blue">匹配</span></th></tr>
+					<tr><td>Alphanumeric character<br><span class="blue">字母数字字符</span></td><td>Itself<br><span class="blue">自身</span></td></tr>
+					<tr><td class="highlight">\0</td><td>The NUL character (\u0000)<br><span class="blue">NUL字符(\u0000)</span></td></tr>
+					<tr><td class="highlight">\t</td><td>Tab (\u0009)<br><span class="blue">制表符(\u0009)</span></td></tr>
+					<tr><td class="highlight">\n</td><td>Newline (\u000A)<br><span class="blue">换行符(\u000A)</span></td></tr>
+					<tr><td class="highlight">\v</td><td>Vertical tab (\u000B)<br><span class="blue">垂直制表符(\u000B)</span></td></tr>
+					<tr><td class="highlight">\f</td><td>Form feed (\u000C)<br><span class="blue">换页符(\u000C)</span></td></tr>
+					<tr><td class="highlight">\r</td><td>Carriage return (\u000D)<br><span class="blue">回车(\u000D)</span></td></tr>
+					<tr><td class="highlight">\xnn</td><td>The Latin character specified by the hexadecimal number nn; for example, \x0A is the same as \n<br><span class="blue">由十六进制数nn指定的拉丁字符，例如，\x0A等价于\n</span></td></tr>
+					<tr><td class="highlight">\uxxxx</td><td>The Unicode character specified by the hexadecimal number xxxx; for example, \u0009 is the same as \t<br><span class="blue">由十六进制xxxx指定的Unicode字符，例如，\u0009等价于\t</span></td></tr>
+					<tr><td class="highlight">\cX</td><td>The control character ^X; for example, \cJ is equivalent to the newline character \n<br><span class="blue">控制字符^X。例如，\cJ等价于换行符\n</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+			<h3>2、Regular expression character classes(正则表达式的字符类)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Matches<br><span class="blue">匹配</span></th></tr>
+					<tr><td class="highlight">[...]</td><td>Any one character between the brackets.<br><span class="blue">位于括号之内的任意字符</span></td></tr>
+					<tr><td class="highlight">[^...]</td><td>Any one character not between the brackets.<br><span class="blue">不在括号之中的任意字符</span></td></tr>
+					<tr><td class="highlight">.</td><td>Any character except newline or another Unicode line terminator.<br><span class="blue">除换行符和其他Unicode行终止符之外的任意字符</span></td></tr>
+					<tr><td class="highlight">\w</td><td>Any ASCII word character. Equivalent to [a-zA-Z0-9_].<br><span class="blue">任意ASCII单字字符，等价于[a-zA-Z0-9_]</span></td></tr>
+					<tr><td class="highlight">\W</td><td>Any character that is not an ASCII word character. Equivalent to [^a-zA-Z0-9_].<br><span class="blue">任意非ASCII单字字符，等价于[^a-zA-Z0-9_]</span></td></tr>
+					<tr><td class="highlight">\s</td><td>Any Unicode whitespace character.<br><span class="blue">任何Unicode空白符</span></td></tr>
+					<tr><td class="highlight">\S</td><td>Any character that is not Unicode whitespace. Note that \w and \S are not the same thing.<br><span class="blue">任何非Unicode空白符的字符，注意\w和\S不同</span></td></tr>
+					<tr><td class="highlight">\d</td><td>Any ASCII digit. Equivalent to [0-9].<br><span class="blue">任意ASCII数字，等价于[0-9_]</span></td></tr>
+					<tr><td class="highlight">\D</td><td>Any character other than an ASCII digit. Equivalent to [^0-9].<br><span class="blue">除了ASCII数字之外的任何字符，等价于[^0-9_]</span></td></tr>
+					<tr><td class="highlight">[\b]</td><td>A literal backspace (special case).<br><span class="blue">退格直接量(特例)</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+			<h3>3、Regular expression repetition characters(正则表达式的重复字符)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Meaning<br><span class="blue">含义</span></th></tr>
+					<tr><td class="highlight">{n,m}</td><td>Match the previous item at least n times but no more than m times.<br><span class="blue">匹配前一项至少n次，但是不能超过m次</span></td></tr>
+					<tr><td class="highlight">{n,}</td><td>Match the previous item n or more times.<br><span class="blue">匹配前一项n次，或更多次</span></td></tr>
+					<tr><td class="highlight">{n}</td><td>Match exactly n occurrences of the previous item.<br><span class="blue">匹配前一项恰好n次</span></td></tr>
+					<tr><td class="highlight">?</td><td>Match zero or one occurrences of the previous item. That is, the previous item is optional. Equivalent to {0,1}.<br><span class="blue">匹配前一项0次或1次，也就是说前一项是可选。等价于{0,1}</span></td></tr>
+					<tr><td class="highlight">+</td><td>Match one or more occurrences of the previous item. Equivalent to {1,}.<br><span class="blue">匹配前一项1次或多次，等价于{1,}</span></td></tr>
+					<tr><td class="highlight">*</td><td>Match zero or more occurrences of the previous item. Equivalent to {0,}.<br><span class="blue">匹配前一项0次或多次，等价于{0,}</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+			<h3>4、Regular expression alternation, grouping, and reference characters(正则表达式的选择、分组和引用字符)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Meaning<br><span class="blue">含义</span></th></tr>
+					<tr><td class="highlight">|</td><td>Alternation. Match either the subexpression to the left or the subexpression to the right.<br><span class="blue">选择。匹配的是该符号左边的子表达式或右边的子表达式</span></td></tr>
+					<tr><td class="highlight">(...)</td><td>Grouping. Group items into a single unit that can be used with *, +, ?, |, and so on. Also remember the characters that match this group for use with later references.<br><span class="blue">组合。将几个项目组合为一个单元，这个单元可由*、+、?和|等符号使用，而且还可以记住和这个组合匹配的字符以供此后的引用使用</span></td></tr>
+					<tr><td class="highlight">(?:...)</td><td>Grouping only. Group items into a single unit, but do not remember the characters that match this group.<br><span class="blue">只组合。把项目组合到一个单元，但是不记忆与该组匹配的字符</span></td></tr>
+					<tr><td class="highlight">\n</td><td>Match the same characters that were matched when group number n was first matched. Groups are subexpressions within (possibly nested) parentheses. Group numbers are assigned by counting left parentheses from left to right. Groups formed with (?: are not numbered.<br><span class="blue">和第n个分组第一次匹配的字符相匹配。组是括号中的子表达式(可能是嵌套的)。组号是从左到右计数的左括号数，以(?:形式分组的组不编码</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+			<h3>5、Regular-expression anchor characters(正则表达式的锚字符)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Meaning<br><span class="blue">含义</span></th></tr>
+					<tr><td class="highlight">^</td><td>Match the beginning of the string and, in multiline searches, the beginning of a line.<br><span class="blue">匹配字符串的开头，在多行检索中，匹配一行的开头</span></td></tr>
+					<tr><td class="highlight">$</td><td>Match the end of the string and, in multiline searches, the end of a line.<br><span class="blue">匹配字符串的结尾，在多行检索中，匹配一行的结尾</span></td></tr>
+					<tr><td class="highlight">\b</td><td>Match a word boundary. That is, match the position between a \w character and a \W character or between a \w character and the beginning or end of a string. (Note, however, that [\b] matches backspace.)<br><span class="blue">匹配一个词语的边界。简而言之，就是位于字符\w和\W之间的位置，或位于字符\w和字符串的开头或结尾之间的位置(但注意，[\b]匹配的是退格符)</span></td></tr>
+					<tr><td class="highlight">\B</td><td>Match a position that is not a word boundary.<br><span class="blue">匹配非词语边界的位置</span></td></tr>
+					<tr><td class="highlight">(?=p)</td><td>A positive lookahead assertion. Require that the following characters match the pattern p, but do not include those characters in the match.<br><span class="blue">正前向声明，要求接下来的字符都与模式p匹配，但是不包括匹配中的那些字符</span></td></tr>
+					<tr><td class="highlight">(?!=p)</td><td>A negative lookahead assertion. Require that the following characters do not match the pattern p.<br><span class="blue">反前向声明，要求接下来的字符不与模式p匹配</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+			<h3>6、Regular-expression flags(正则表达式的标志)</h3>
+			<table>
+				<tbody>
+					<tr><th width="15%">Character<br><span class="blue">字符</span></th><th>Meaning<br><span class="blue">含义</span></th></tr>
+					<tr><td class="highlight">i</td><td>Perform case-insensitive matching.<br><span class="blue">执行不区分大小写的匹配</span></td></tr>
+					<tr><td class="highlight">g</td><td>Perform a global matchthat is, find all matches rather than stopping after the first match.<br><span class="blue">执行一个全局匹配。简而言之，即找到所有匹配，而不是在找到第一个之后就停止</span></td></tr>
+					<tr><td class="highlight">m</td><td>Multiline mode. ^ matches beginning of line or beginning of string, and $ matches end of line or end of string.<br><span class="blue">多行模式，^匹配一行的开头或字符串的开头，$匹配一行的结尾或字符串的结尾</span></td></tr>
+				</tbody>
+			</table>
+			<br/>
+		</div>
+	</body>
+</html>

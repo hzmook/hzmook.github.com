@@ -1,0 +1,1170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>jQuery源码解析2(Core)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style type="text/css">
+</style>
+</head>
+<body>
+
+<h2>jQuery源码解析2(Core)</h2>
+<p>转自: <A href="http://bencode.javaeye.com/blog/576084" target=_blank>http://bencode.javaeye.com/blog/576084</A>
+</p>
+<DIV class=blog_content>
+<P>&nbsp;在上一篇中，我们介绍了jQuery Utilities部分的代码。 这一部分要看看Core部分的。</P>
+<P>&nbsp;</P>
+<P>我们知道 $('#id') 或 jQuery('#id') 将会返回一个对象， 这个对象的构造函数是：jQuery.fn.init</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery&nbsp;=&nbsp;window.jQuery&nbsp;=&nbsp;window.$&nbsp;=&nbsp;</SPAN><SPAN
+		class=keyword>function</SPAN><SPAN>(&nbsp;selector,&nbsp;context&nbsp;)&nbsp;{ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>new</SPAN><SPAN>&nbsp;jQuery.fn.init(&nbsp;selector,&nbsp;context&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	jQuery = window.jQuery = window.$ = function( selector, context ) {
+		return new jQuery.fn.init( selector, context );
+	},</PRE>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.fn.init.prototype&nbsp;=&nbsp;jQuery.fn;&nbsp;&nbsp;</SPAN></SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.fn.init.prototype = jQuery.fn;</PRE>
+<P>&nbsp;</P>
+<P>让我们先看看 jQuery.fn.init</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.fn&nbsp;=&nbsp;jQuery.prototype&nbsp;=&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;init:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;selector,&nbsp;context&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selector&nbsp;=&nbsp;selector&nbsp;||&nbsp;document;&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.fn = jQuery.prototype = {
+	init: function( selector, context ) {
+		selector = selector || document;</PRE>
+<P>&nbsp;</P>
+<P>selector 可以指定不同的数据类型，我们一个一个来：</P>
+<P>&nbsp;</P>
+<P><STRONG>1.&nbsp; jQuery(element);&nbsp; // an html dom element</STRONG></P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=comment>//&nbsp;Handle&nbsp;$(DOMElement) </SPAN><SPAN>&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN></SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;selector.nodeType&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>[0]&nbsp;=&nbsp;selector;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.length&nbsp;=&nbsp;1;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.context&nbsp;=&nbsp;selector;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">		// Handle $(DOMElement)
+		if ( selector.nodeType ) {
+			this[0] = selector;
+			this.length = 1;
+			this.context = selector;
+			return this;
+		}</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;所以我们可以这样使用：</P>
+<P>&nbsp;</P>
+<P><STRONG>var elem = $(element); // 用于包装一个html dom元素, 以便使用jQuery操作它。</STRONG></P>
+<P>&nbsp;</P>
+<P>注意到以上代码，所以我们还<STRONG>可以像数组一样使用</STRONG>它：）</P>
+<P>&nbsp;</P>
+<P><STRONG>elem[0];</STRONG> // return html dom element</P>
+<P><STRONG>elem.length;</STRONG> //</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>2. jQuery(html, [context]),&nbsp; jQuery(elements, [context])</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;</SPAN><SPAN class=keyword>typeof</SPAN><SPAN>&nbsp;selector&nbsp;===&nbsp;</SPAN><SPAN
+		class=string>"string"</SPAN><SPAN>&nbsp;)&nbsp;{ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;Are&nbsp;we&nbsp;dealing&nbsp;with&nbsp;HTML&nbsp;string&nbsp;or&nbsp;an&nbsp;ID?
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;match&nbsp;=&nbsp;quickExpr.exec(&nbsp;selector&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;Verify&nbsp;a&nbsp;match,&nbsp;and&nbsp;that&nbsp;no&nbsp;context&nbsp;was&nbsp;specified&nbsp;for&nbsp;#id
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;match&nbsp;&amp;&amp;&nbsp;(match[1]&nbsp;||&nbsp;!context)&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;HANDLE:&nbsp;$(html)&nbsp;-&gt;&nbsp;$(array)
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;match[1]&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selector&nbsp;=&nbsp;jQuery.clean(&nbsp;[&nbsp;match[1]&nbsp;],&nbsp;context&nbsp;);&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">		if ( typeof selector === "string" ) {
+			// Are we dealing with HTML string or an ID?
+			var match = quickExpr.exec( selector );
+
+			// Verify a match, and that no context was specified for #id
+			if ( match &amp;&amp; (match[1] || !context) ) {
+
+				// HANDLE: $(html) -&gt; $(array)
+				if ( match[1] )
+					selector = jQuery.clean( [ match[1] ], context );</PRE>
+<P>&nbsp;</P>
+<P>quickExpr 是一个正则式，用于匹配一个html string 或 id 字符串 (见第1篇)</P>
+<P>&nbsp;</P>
+<P>以上部分处理这样的调用：</P>
+<P>&nbsp;</P>
+<P><STRONG>$('&lt;div id="new-div" /&gt;')</STRONG>&nbsp;&nbsp;&nbsp;</P>
+<P>&nbsp;</P>
+<P>稍微浏览一下jQuery.clean， 知道它解析字符串，返回 html dom 元素的数组。&nbsp;</P>
+<P>&nbsp;</P>
+<P>解析之后，&nbsp;selector 是一个 html dom 元素的数组。</P>
+<P>&nbsp;</P>
+<P>然后：&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.setArray(jQuery.isArray(&nbsp;selector&nbsp;)&nbsp;?
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;selector&nbsp;: &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;jQuery.makeArray(selector));&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">		return this.setArray(jQuery.isArray( selector ) ?
+			selector :
+			jQuery.makeArray(selector));</PRE>
+<P>&nbsp;</P>
+<P>// setArray 马上就会分析到（因为下面用到）</P>
+<P>&nbsp;</P>
+<P><STRONG>jQuery(elements, [context])</STRONG></P>
+<P>&nbsp;</P>
+<P>这个直接调用上面的setArray。</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>3. jQuery('#id')</STRONG></P>
+<P>&nbsp;</P>
+<P>如果是id字符串</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG></STRONG></P>
+<P><STRONG></STRONG></P>
+<P><STRONG></STRONG></P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=comment>//&nbsp;HANDLE:&nbsp;$("#id") </SPAN><SPAN>&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN></SPAN><SPAN class=keyword>else</SPAN><SPAN>&nbsp;{ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;elem&nbsp;=&nbsp;document.getElementById(&nbsp;match[3]&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;Handle&nbsp;the&nbsp;case&nbsp;where&nbsp;IE&nbsp;and&nbsp;Opera&nbsp;return&nbsp;items
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;by&nbsp;name&nbsp;instead&nbsp;of&nbsp;ID
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;elem&nbsp;&amp;&amp;&nbsp;elem.id&nbsp;!=&nbsp;match[3]&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;jQuery().find(&nbsp;selector&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;Otherwise,&nbsp;we&nbsp;inject&nbsp;the&nbsp;element&nbsp;directly&nbsp;into&nbsp;the&nbsp;jQuery&nbsp;object
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;ret&nbsp;=&nbsp;jQuery(&nbsp;elem&nbsp;||&nbsp;[]&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;ret.context&nbsp;=&nbsp;document; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;ret.selector&nbsp;=&nbsp;selector; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;ret;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">				// HANDLE: $("#id")
+				else {
+					var elem = document.getElementById( match[3] );
+
+					// Handle the case where IE and Opera return items
+					// by name instead of ID
+					if ( elem &amp;&amp; elem.id != match[3] )
+						return jQuery().find( selector );
+
+					// Otherwise, we inject the element directly into the jQuery object
+					var ret = jQuery( elem || [] );
+					ret.context = document;
+					ret.selector = selector;
+					return ret;
+				}</PRE>
+<P>&nbsp;</P>
+<P>除去 IE 的 hack 部分</P>
+<P>&nbsp;</P>
+<P>$('#id') 相当于：</P>
+<P>&nbsp;</P>
+<P>var&nbsp;dom = document.getElementById('#id');</P>
+<P>var elm = $(dom);<BR>
+elm.context = document;<BR>
+elm.selector = '#id'';</P>
+<P>&nbsp;</P>
+<P><SPAN style="FONT-WEIGHT: bold">所以，使用 $('#id') 是非常快的，因为它直接调用 document.getElement
+取得元素，不需要额外的解析。</SPAN></P>
+<P>&nbsp;</P>
+<P>//---</P>
+<P>&nbsp;</P>
+<P><STRONG>4. jQuery(callback);</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>}&nbsp;</SPAN><SPAN class=keyword>else</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;jQuery.isFunction(&nbsp;selector&nbsp;)&nbsp;)
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;jQuery(&nbsp;document&nbsp;).ready(&nbsp;selector&nbsp;);&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">			} else if ( jQuery.isFunction( selector ) )
+				return jQuery( document ).ready( selector );</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=comment>//&nbsp;以下三个看喜欢选用。 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>$(</SPAN><SPAN class=keyword>function</SPAN><SPAN>()&nbsp;{...})&nbsp;;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>$(document).ready(</SPAN><SPAN class=keyword>function</SPAN><SPAN>()&nbsp;{...});&nbsp;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>$().ready(</SPAN><SPAN class=keyword>function</SPAN><SPAN>()&nbsp;{...});&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">// 以下三个看喜欢选用。
+
+$(function() {...}) ;
+
+$(document).ready(function() {...}); 
+
+$().ready(function() {...});
+</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>5. jQuery(css_selector, [context]);&nbsp;</STRONG></P>
+<P><STRONG></STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;</SPAN><SPAN class=keyword>typeof</SPAN><SPAN>&nbsp;selector&nbsp;===&nbsp;</SPAN><SPAN
+		class=string>"string"</SPAN><SPAN>&nbsp;)&nbsp;{ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;match&nbsp;=&nbsp;quickExpr.exec(&nbsp;selector&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;match&nbsp;&amp;&amp;&nbsp;(match[1]&nbsp;||&nbsp;!context)&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;</SPAN><SPAN class=keyword>else</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;jQuery(&nbsp;context&nbsp;).find(&nbsp;selector&nbsp;);&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">		if ( typeof selector === "string" ) {
+			var match = quickExpr.exec( selector );
+			if ( match &amp;&amp; (match[1] || !context) ) {
+				...
+			} else
+				return jQuery( context ).find( selector );</PRE>
+<P>&nbsp;</P>
+<P>如果是除id 以外的 css 选择器， 那么就把这个艰巨任务的任务交给&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;jQuery( context ).find( selector );</P>
+<P><STRONG><SPAN style="FONT-WEIGHT: normal"><BR>
+</SPAN></STRONG></P>
+<P>&nbsp;</P>
+<P><STRONG>6.&nbsp; jQuery(jq)</STRONG></P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;selector.selector&nbsp;&amp;&amp;&nbsp;selector.context&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.selector&nbsp;=&nbsp;selector.selector;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.context&nbsp;=&nbsp;selector.context;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN></SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.setArray(jQuery.isArray(&nbsp;selector&nbsp;)&nbsp;?
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;selector&nbsp;: &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;jQuery.makeArray(selector));&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">		if ( selector.selector &amp;&amp; selector.context ) {
+			this.selector = selector.selector;
+			this.context = selector.context;
+		}
+
+		return this.setArray(jQuery.isArray( selector ) ?
+			selector :
+			jQuery.makeArray(selector));</PRE>
+<P>&nbsp;</P>
+<P>有时候我们这样：</P>
+<P>&nbsp;</P>
+<P>var a = $('#id');</P>
+<P>...</P>
+<P>...</P>
+<P>在某一个地方</P>
+<P>$(a).click(...)&nbsp;</P>
+<P>&nbsp;</P>
+<P>就是<STRONG>重复包装了一个jquery对象(有时候忘记了，是一个jq对象还是一个html dom)。 </STRONG></P>
+<P><STRONG>这个速度也挺快的，因为只是进行简单的引用赋值。</STRONG></P>
+<P>&nbsp;</P>
+<P>---</P>
+<P>setArray很简单：</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>setArray:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elems&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.length&nbsp;=&nbsp;0;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;Array.prototype.push.apply(&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>,&nbsp;elems&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	setArray: function( elems ) {
+		this.length = 0;
+		Array.prototype.push.apply( this, elems );
+		return this;
+	}</PRE>
+<P>&nbsp;</P>
+<P><STRONG>所以我们可以像使用数组一样引用jQuery中的dom元素</STRONG></P>
+<P><STRONG></STRONG></P>
+<P>&nbsp;</P>
+<P>分析了 jQuery 的构造函数，下面看一些API 文档 Core 部分的方法。</P>
+<P>&nbsp;</P>
+<P>先看 jQuery Object Accessors 部分</P>
+<P>&nbsp;</P>
+<P><STRONG>1. each(callback)</STRONG></P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>each:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;callback,&nbsp;args&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;jQuery.each(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>,&nbsp;callback,&nbsp;args&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	each: function( callback, args ) {
+		return jQuery.each( this, callback, args );
+	},</PRE>
+<P>&nbsp;</P>
+<P>args 内部使用。</P>
+<P>&nbsp;</P>
+<P><STRONG>2. size()</STRONG></P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>size:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>()&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.length; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	size: function() {
+		return this.length;
+	},</PRE>
+<P>&nbsp;</P>
+<P><STRONG>3. length, selector, context</STRONG></P>
+<P>&nbsp;</P>
+<P>构造函数中已分析过</P>
+<P>&nbsp;</P>
+<P><STRONG>4. eq(i)</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>eq:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;i&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.slice(&nbsp;i,&nbsp;+i&nbsp;+&nbsp;1&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	eq: function( i ) {
+		return this.slice( i, +i + 1 );
+	},</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>+i, 就是 0+i, 常用于转成整形（如 +new Date())</P>
+<P>&nbsp;</P>
+<P>假设我们有这样的html</P>
+<P>&lt;div class="mydiv" /&gt;&nbsp;<BR>
+&lt;div class="mydiv" /&gt;&nbsp;<BR>
+&lt;div iclass="mydiv" /&gt;&nbsp;<BR>
+&lt;div class="mydiv" /&gt;&nbsp;</P>
+<P>&lt;div class="mydiv" /&gt;&nbsp;</P>
+<P>&nbsp;</P>
+<P>我们要对第3个节点进行操作，可以这样:</P>
+<P>&nbsp;</P>
+<P>$('.mydiv').eq(3).css(...</P>
+<P>&nbsp;</P>
+<P><STRONG>5. get(), get(index)</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>get:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;num&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;num&nbsp;===&nbsp;undefined&nbsp;?
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Array.prototype.slice.call(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>&nbsp;)&nbsp;: &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>[&nbsp;num&nbsp;];
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	get: function( num ) {
+		return num === undefined ?
+			Array.prototype.slice.call( this ) :
+			this[ num ];
+	},</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>代码已直观到超出我的解释能力了。</P>
+<P>&nbsp;</P>
+<P><STRONG>6. index(elem)</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>index:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elem&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;jQuery.inArray(
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem&nbsp;&amp;&amp;&nbsp;elem.jquery&nbsp;?&nbsp;elem[0]&nbsp;:&nbsp;elem
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	index: function( elem ) {
+		return jQuery.inArray(
+			elem &amp;&amp; elem.jquery ? elem[0] : elem
+		, this );
+	},</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>inArray返回的是位置，见第1篇</P>
+<P>&nbsp;</P>
+<P><STRONG>index的参数也可以是 jQuery 对象哦</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>再看 Data 部分</P>
+<P>&nbsp;</P>
+<P>首先来看看一个内部方法<STRONG> jQuery.data</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>function</SPAN><SPAN>&nbsp;now(){ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;+</SPAN><SPAN
+		class=keyword>new</SPAN><SPAN>&nbsp;Date; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">function now(){
+	return +new Date;
+}</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;expando&nbsp;=&nbsp;</SPAN><SPAN
+		class=string>"jQuery"</SPAN><SPAN>&nbsp;+&nbsp;now(),&nbsp;uuid&nbsp;=&nbsp;0,&nbsp;windowData&nbsp;=&nbsp;{};&nbsp;&nbsp;</SPAN></SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">var expando = "jQuery" + now(), uuid = 0, windowData = {};</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>一个函数，几个变量，我们 go on！</P>
+<P>&nbsp;</P>
+<P>jQuery.data 将一个对象和一个 html dom关联。 让我们可以管理节点相关数据。</P>
+<P>&nbsp;</P>
+<P>见API文档：<A href="http://docs.jquery.com/Internals">http://docs.jquery.com/Internals</A>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.extend({ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;cache:&nbsp;{},&nbsp;&nbsp;</SPAN><SPAN class=comment>//&nbsp;实际的数据存放在这里
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elem,&nbsp;name,&nbsp;data&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem&nbsp;=&nbsp;elem&nbsp;==&nbsp;window&nbsp;?&nbsp;</SPAN><SPAN
+		class=comment>//&nbsp;对&nbsp;window&nbsp;进行特殊处理(在IE下&nbsp;document&nbsp;==&nbsp;window) </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windowData&nbsp;:
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;id&nbsp;=&nbsp;elem[&nbsp;expando&nbsp;];&nbsp;&nbsp;</SPAN><SPAN
+		class=comment>//&nbsp;节点上其实仅仅存一个uuid,&nbsp;expando&nbsp;是一个串 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;!id&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;=&nbsp;elem[&nbsp;expando&nbsp;]&nbsp;=&nbsp;++uuid;&nbsp;&nbsp;</SPAN><SPAN
+		class=comment>//&nbsp;节点没有uuid,&nbsp;就生成一个 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;name&nbsp;&amp;&amp;&nbsp;!jQuery.cache[&nbsp;id&nbsp;]&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.cache[&nbsp;id&nbsp;]&nbsp;=&nbsp;{};&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN class=comment>//&nbsp;节点相关的数据保存在这里
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;data&nbsp;!==&nbsp;undefined&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.cache[&nbsp;id&nbsp;][&nbsp;name&nbsp;]&nbsp;=&nbsp;data;&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;存数据 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;name&nbsp;?&nbsp;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.cache[&nbsp;id&nbsp;][&nbsp;name&nbsp;]&nbsp;:&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN class=comment>//&nbsp;取数据
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id;&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;取ID </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.extend({
+	cache: {},  // 实际的数据存放在这里
+
+	data: function( elem, name, data ) {
+		elem = elem == window ? // 对 window 进行特殊处理(在IE下 document == window)
+			windowData :
+			elem;
+
+		var id = elem[ expando ];  // 节点上其实仅仅存一个uuid, expando 是一个串
+		if ( !id )
+			id = elem[ expando ] = ++uuid;  // 节点没有uuid, 就生成一个
+
+		if ( name &amp;&amp; !jQuery.cache[ id ] )
+			jQuery.cache[ id ] = {};<SPAN style="WHITE-SPACE: pre">	</SPAN>// 节点相关的数据保存在这里
+
+		if ( data !== undefined )
+			jQuery.cache[ id ][ name ] = data;<SPAN style="WHITE-SPACE: pre">	</SPAN>// 存数据
+
+		return name ? 
+			jQuery.cache[ id ][ name ] :<SPAN style="WHITE-SPACE: pre">	</SPAN>// 取数据
+			id;<SPAN style="WHITE-SPACE: pre">	</SPAN>// 取ID
+	},</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>所以可以以下几种方式使用<STRONG>（在jQuery内部使用）</STRONG>：</P>
+<P>&nbsp;</P>
+<P>var id = jQuery.data(elm);<SPAN style="WHITE-SPACE: pre"> </SPAN>// 取 uuid,</P>
+<P>var value = jQuery.data(elm, name);</P>
+<P>var value = jQuery.data(elm, name, value);</P>
+<P>&nbsp;</P>
+<P>//---</P>
+<P>再看 removeData</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;removeData:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elem,&nbsp;name&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem&nbsp;=&nbsp;elem&nbsp;==&nbsp;window&nbsp;?&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;如上 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windowData&nbsp;:
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;id&nbsp;=&nbsp;elem[&nbsp;expando&nbsp;];
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;name&nbsp;)&nbsp;{&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;仅仅移除name相关的数据 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;jQuery.cache[&nbsp;id&nbsp;]&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>delete</SPAN><SPAN>&nbsp;jQuery.cache[&nbsp;id&nbsp;][&nbsp;name&nbsp;];
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=comment>//&nbsp;如果&nbsp;jQuery.cache[id]&nbsp;是空对象，那么就&nbsp;jQuery.removeData(elem) </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;=&nbsp;</SPAN><SPAN
+		class=string>""</SPAN><SPAN>; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>for</SPAN><SPAN>&nbsp;(&nbsp;name&nbsp;</SPAN><SPAN class=keyword>in</SPAN><SPAN>&nbsp;jQuery.cache[&nbsp;id&nbsp;]&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>break</SPAN><SPAN>; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;!name&nbsp;) &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.removeData(&nbsp;elem&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;</SPAN><SPAN class=keyword>else</SPAN><SPAN>&nbsp;{&lt;SPAN&nbsp;style=</SPAN><SPAN
+		class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN class=comment>//&nbsp;移除节点的关联数据
+	</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&lt;SPAN&nbsp;style=</SPAN><SPAN class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;先删除dom&nbsp;节点上的&nbsp;uuid </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>try</SPAN><SPAN>&nbsp;{ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>delete</SPAN><SPAN>&nbsp;elem[&nbsp;expando&nbsp;]; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;</SPAN><SPAN
+		class=keyword>catch</SPAN><SPAN>(e){ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&lt;SPAN&nbsp;style=</SPAN><SPAN class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;IE下需要使用removeAttribute进行移除 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;elem.removeAttribute&nbsp;) &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elem.removeAttribute(&nbsp;expando&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&lt;SPAN&nbsp;style=</SPAN><SPAN class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SPAN&gt;</SPAN><SPAN
+		class=comment>//&nbsp;再删除实际数据 </SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>delete</SPAN><SPAN>&nbsp;jQuery.cache[&nbsp;id&nbsp;]; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	removeData: function( elem, name ) {
+		elem = elem == window ?<SPAN style="WHITE-SPACE: pre">	</SPAN>// 如上
+			windowData :
+			elem;
+
+		var id = elem[ expando ];
+
+		if ( name ) {<SPAN style="WHITE-SPACE: pre">	</SPAN>// 仅仅移除name相关的数据
+			if ( jQuery.cache[ id ] ) {
+				delete jQuery.cache[ id ][ name ];
+
+				// 如果 jQuery.cache[id] 是空对象，那么就 jQuery.removeData(elem)
+				name = "";
+
+				for ( name in jQuery.cache[ id ] )
+					break;
+
+				if ( !name )
+					jQuery.removeData( elem );
+			}
+		} else {<SPAN style="WHITE-SPACE: pre">	</SPAN>// 移除节点的关联数据
+<SPAN style="WHITE-SPACE: pre">			</SPAN>// 先删除dom 节点上的 uuid
+			try {
+				delete elem[ expando ];
+			} catch(e){
+<SPAN style="WHITE-SPACE: pre">				</SPAN>// IE下需要使用removeAttribute进行移除
+				if ( elem.removeAttribute )
+					elem.removeAttribute( expando );
+			}
+<SPAN style="WHITE-SPACE: pre">			</SPAN>// 再删除实际数据
+			delete jQuery.cache[ id ];
+		}
+	},</PRE>
+<P>&nbsp;</P>
+<P>所以可以这样使用<STRONG>(jQuery内部)</STRONG></P>
+<P>&nbsp;</P>
+<P>jQuery.removeData(elem);</P>
+<P>jQuery.removeData(elem, name);</P>
+<P>&nbsp;</P>
+<P>好了，下面就看看我们经常使用的 data 吧</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>1. data(name), data(name, value)</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.fn.extend({ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;key,&nbsp;value&nbsp;){
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;parts&nbsp;=&nbsp;key.split(</SPAN><SPAN
+		class=string>"."</SPAN><SPAN>); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parts[1]&nbsp;=&nbsp;parts[1]&nbsp;?&nbsp;</SPAN><SPAN
+		class=string>"."</SPAN><SPAN>&nbsp;+&nbsp;parts[1]&nbsp;:&nbsp;</SPAN><SPAN class=string>""</SPAN><SPAN>;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;value&nbsp;===&nbsp;undefined&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>var</SPAN><SPAN>&nbsp;data&nbsp;=&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.triggerHandler(</SPAN><SPAN
+		class=string>"getData"</SPAN><SPAN>&nbsp;+&nbsp;parts[1]&nbsp;+&nbsp;</SPAN><SPAN class=string>"!"</SPAN><SPAN>,&nbsp;[parts[0]]);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;data&nbsp;===&nbsp;undefined&nbsp;&amp;&amp;&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.length&nbsp;) &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;jQuery.data(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>[0],&nbsp;key&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>return</SPAN><SPAN>&nbsp;data&nbsp;===&nbsp;undefined&nbsp;&amp;&amp;&nbsp;parts[1]&nbsp;?
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.data(&nbsp;parts[0]&nbsp;)&nbsp;: &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;</SPAN><SPAN class=keyword>else</SPAN><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>.trigger(</SPAN><SPAN
+		class=string>"setData"</SPAN><SPAN>&nbsp;+&nbsp;parts[1]&nbsp;+&nbsp;</SPAN><SPAN class=string>"!"</SPAN><SPAN>,&nbsp;[parts[0],&nbsp;value]).each(</SPAN><SPAN
+		class=keyword>function</SPAN><SPAN>(){ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.data(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>,&nbsp;key,&nbsp;value&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.fn.extend({
+	data: function( key, value ){
+		var parts = key.split(".");
+		parts[1] = parts[1] ? "." + parts[1] : "";
+
+		if ( value === undefined ) {
+			var data = this.triggerHandler("getData" + parts[1] + "!", [parts[0]]);
+
+			if ( data === undefined &amp;&amp; this.length )
+				data = jQuery.data( this[0], key );
+
+			return data === undefined &amp;&amp; parts[1] ?
+				this.data( parts[0] ) :
+				data;
+		} else
+			return this.trigger("setData" + parts[1] + "!", [parts[0], value]).each(function(){
+				jQuery.data( this, key, value );
+			});
+	},</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>代码很简单，可是应用却让人有点遐想（是否想到了<STRONG>数据绑定?</STRONG>）</P>
+<P>&nbsp;</P>
+<P>稍微整理一下先：</P>
+<P><BR>
+<STRONG>$(elem).data('abc.def') :</STRONG></P>
+<P><STRONG><BR>
+</STRONG></P>
+<P><STRONG>&nbsp;</STRONG><SPAN style="WHITE-SPACE: pre"><STRONG>triggerHandler('getData.def!',
+['abc']) ---&gt; jQuery.data(elem, 'abc.def') --&gt; jQuery.data(elem, 'abc') </STRONG></SPAN></P>
+<P>&nbsp;</P>
+<P><STRONG>只作用于第一个元素</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>$(elem).data('abc.def', 'hello world!'):</STRONG></P>
+<P><STRONG><BR>
+</STRONG></P>
+<P><STRONG>(1)&nbsp; trigger('setData.def!', ['abc', 'hello world'])&nbsp;<BR>
+(2)&nbsp; jQuery.data(elem, 'abc.def', 'hello world');</STRONG></P>
+<P>&nbsp;</P>
+<P><STRONG>作用于jQuery对象中的所有元素</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>//---看一个例子：</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>页面上有一个HTML输入域， 它可以弄入tags</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Html代码</DIV>
+</DIV>
+<OL class=dp-xml>
+	<LI><SPAN><SPAN class=tag>&lt;</SPAN><SPAN class=tag-name>input</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=attribute>id</SPAN><SPAN>=</SPAN><SPAN class=attribute-value>"tags"</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=attribute>type</SPAN><SPAN>=</SPAN><SPAN class=attribute-value>"text"</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=tag>/&gt;</SPAN><SPAN>&nbsp;&nbsp;</SPAN></SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=html name="code">&lt;input id="tags" type="text" /&gt;</PRE>
+<P>&nbsp;</P>
+<DIV><BR>
+</DIV>
+<DIV>我们在某个地方这样初始化这个输入域， 它应该按照一定的格式显示tags：</DIV>
+<DIV><BR>
+</DIV>
+<DIV>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;tags&nbsp;=&nbsp;[</SPAN><SPAN
+		class=string>'Javascript'</SPAN><SPAN>,&nbsp;</SPAN><SPAN class=string>'jQuery'</SPAN><SPAN>,&nbsp;</SPAN><SPAN
+		class=string>'Web前端'</SPAN><SPAN>]; &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>$(</SPAN><SPAN class=string>'#tags'</SPAN><SPAN>).data(</SPAN><SPAN class=string>'tags'</SPAN><SPAN>,&nbsp;tags);&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	var tags = ['Javascript', 'jQuery', 'Web前端'];
+	$('#tags').data('tags', tags);</PRE></DIV>
+<DIV>&nbsp;</DIV>
+<DIV>我们可以这样获取tags:</DIV>
+<DIV><BR>
+</DIV>
+<DIV>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;tags&nbsp;=&nbsp;$(</SPAN><SPAN
+		class=string>'#tags'</SPAN><SPAN>).data(</SPAN><SPAN class=string>'tags'</SPAN><SPAN>);&nbsp;&nbsp;</SPAN></SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">var tags = $('#tags').data('tags');</PRE>&nbsp;</DIV>
+<DIV><BR>
+</DIV>
+<DIV>如何从输入域显示和获取tags， 在最接近输入域的地方有这样的代码：</DIV>
+<DIV><BR>
+</DIV>
+<DIV><BR>
+</DIV>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>&lt;SPAN&nbsp;style=</SPAN><SPAN class=string>"WHITE-SPACE:&nbsp;pre"</SPAN><SPAN>&gt;&nbsp;&lt;/SPAN&gt;$(</SPAN><SPAN
+		class=string>'#tags'</SPAN><SPAN>).bind(</SPAN><SPAN class=string>'getData'</SPAN><SPAN>,&nbsp;</SPAN><SPAN
+		class=keyword>function</SPAN><SPAN>(e,&nbsp;name)&nbsp;{ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(name&nbsp;==&nbsp;</SPAN><SPAN
+		class=string>'tags'</SPAN><SPAN>)&nbsp;{ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>return</SPAN><SPAN>&nbsp;$(</SPAN><SPAN class=keyword>this</SPAN><SPAN>).val().split(/\s*;\s*/);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;}).bind(</SPAN><SPAN class=string>'setData'</SPAN><SPAN>,&nbsp;</SPAN><SPAN
+		class=keyword>function</SPAN><SPAN>(e,&nbsp;name,&nbsp;value)&nbsp;{ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(name&nbsp;==&nbsp;</SPAN><SPAN
+		class=string>'tags'</SPAN><SPAN>)&nbsp;{ &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>).val(value.join(</SPAN><SPAN class=string>';&nbsp;'</SPAN><SPAN>));
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;});&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code"><SPAN style="WHITE-SPACE: pre">	</SPAN>$('#tags').bind('getData', function(e, name) {
+		if (name == 'tags') {
+			return $(this).val().split(/\s*;\s*/);
+		}
+	}).bind('setData', function(e, name, value) {
+		if (name == 'tags') {
+			$(this).val(value.join('; '));
+		}
+	});</PRE>
+<P>&nbsp;</P>
+<P>//~&nbsp;</P>
+<P>&nbsp;</P>
+<P><STRONG>&nbsp;2. queue(name), queue(name, callback), queue(name, queue)</STRONG></P>
+<P>&nbsp;</P>
+<P>同样，有我们不好使用，但依然存在的&nbsp; <BR>
+<BR>
+<STRONG>jQuery.queue,&nbsp; jQuery.dequeue</STRONG></P>
+<P>&nbsp;</P>
+<P>&nbsp;我们可以用它实现<SPAN lang=EN-US>Chain of Responsibility 或Active
+Objects&nbsp;模式，让我们可以把操作串起来。</SPAN></P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.extend({ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;... &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;queue:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elem,&nbsp;type,&nbsp;data&nbsp;)&nbsp;{
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;elem&nbsp;){
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;=&nbsp;(type&nbsp;||&nbsp;</SPAN><SPAN
+		class=string>"fx"</SPAN><SPAN>)&nbsp;+&nbsp;</SPAN><SPAN class=string>"queue"</SPAN><SPAN>;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>var</SPAN><SPAN>&nbsp;q&nbsp;=&nbsp;jQuery.data(&nbsp;elem,&nbsp;type&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;!q&nbsp;||&nbsp;jQuery.isArray(data)&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;=&nbsp;jQuery.data(&nbsp;elem,&nbsp;type,&nbsp;jQuery.makeArray(data)&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>else</SPAN><SPAN>&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>(&nbsp;data&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q.push(&nbsp;data&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;q;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.extend({
+	...
+
+
+	queue: function( elem, type, data ) {
+		if ( elem ){
+			type = (type || "fx") + "queue";
+
+			var q = jQuery.data( elem, type );
+	
+			if ( !q || jQuery.isArray(data) )
+				q = jQuery.data( elem, type, jQuery.makeArray(data) );
+			else if( data )
+				q.push( data );
+	
+		}
+		return q;
+	},</PRE>
+<P>&nbsp;</P>
+<P>(PS: return q 在 if 里面更好?)<BR>
+&nbsp;</P>
+<P>1. type 默认为 'fx' &lt;-- Effects 将使用此queue</P>
+<P>2. data 如果为 array, 则替换原 queue (用makeArray, 是需要创建一个新数组，因为dequeue会修改数组。)</P>
+<P>&nbsp;</P>
+<P>下面看degueue:</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>dequeue:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(&nbsp;elem,&nbsp;type&nbsp;){
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>var</SPAN><SPAN>&nbsp;queue&nbsp;=&nbsp;jQuery.queue(&nbsp;elem,&nbsp;type&nbsp;),
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn&nbsp;=&nbsp;queue.shift();
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>(&nbsp;!type&nbsp;||&nbsp;type&nbsp;===&nbsp;</SPAN><SPAN
+		class=string>"fx"</SPAN><SPAN>&nbsp;) &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn&nbsp;=&nbsp;queue[0];
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>(&nbsp;fn&nbsp;!==&nbsp;undefined&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fn.call(elem); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	dequeue: function( elem, type ){
+		var queue = jQuery.queue( elem, type ),
+			fn = queue.shift();
+		
+		if( !type || type === "fx" )
+			fn = queue[0];
+			
+		if( fn !== undefined )
+			fn.call(elem);
+	}</PRE>
+<P>&nbsp;</P>
+<P>代码很简单：&nbsp;取出第一个操作， 执行它。&nbsp;(或者说： 执行下一个操作，更恰当些)。</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>jQuery.queue 和 jQuery.dequeue 是工具方法， jQuery对象对它们进行了包装，让我们可以使用：</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>jQuery.fn.extend({ &nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;... &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;queue:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(type,&nbsp;data){
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;</SPAN><SPAN
+		class=keyword>typeof</SPAN><SPAN>&nbsp;type&nbsp;!==&nbsp;</SPAN><SPAN class=string>"string"</SPAN><SPAN>&nbsp;)&nbsp;{&nbsp;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;type;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;=&nbsp;</SPAN><SPAN
+		class=string>"fx"</SPAN><SPAN>; &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>if</SPAN><SPAN>&nbsp;(&nbsp;data&nbsp;===&nbsp;undefined&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>return</SPAN><SPAN>&nbsp;jQuery.queue(&nbsp;</SPAN><SPAN class=keyword>this</SPAN><SPAN>[0],&nbsp;type&nbsp;);
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.each(</SPAN><SPAN class=keyword>function</SPAN><SPAN>(){
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>var</SPAN><SPAN>&nbsp;queue&nbsp;=&nbsp;jQuery.queue(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>,&nbsp;type,&nbsp;data&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN
+		class=keyword>if</SPAN><SPAN>(&nbsp;type&nbsp;==&nbsp;</SPAN><SPAN class=string>"fx"</SPAN><SPAN>&nbsp;&amp;&amp;&nbsp;queue.length&nbsp;==&nbsp;1&nbsp;)
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;queue[0].call(</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">jQuery.fn.extend({
+	...
+
+	queue: function(type, data){
+		if ( typeof type !== "string" ) { 
+			data = type;
+			type = "fx";
+		}
+
+		if ( data === undefined )
+			return jQuery.queue( this[0], type );
+
+		return this.each(function(){
+			var queue = jQuery.queue( this, type, data );
+			
+			 if( type == "fx" &amp;&amp; queue.length == 1 )
+				queue[0].call(this);
+		});
+	},</PRE>
+<P>&nbsp;</P>
+<P>1.&nbsp; $('#id').queue(function() ...);&nbsp;&nbsp; 相当于&nbsp;&nbsp; $('#id').queue('fx',
+function() ...);&nbsp;&nbsp; 用于添加操作到&nbsp;fx</P>
+<P>2.&nbsp; $('#id').queue()&nbsp;;&nbsp; 相当于 $('#id').queue('fx')&nbsp;;&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>dequeue 很简单， 对每个dom元素， 都调用jQuery.dequeue</P>
+<P>&nbsp;</P>
+<DIV class=dp-highlighter>
+<DIV class=bar>
+<DIV class=tools>Js代码</DIV>
+</DIV>
+<OL class=dp-c>
+	<LI><SPAN><SPAN>dequeue:&nbsp;</SPAN><SPAN class=keyword>function</SPAN><SPAN>(type){
+	&nbsp;&nbsp;</SPAN></SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN class=keyword>return</SPAN><SPAN>&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>.each(</SPAN><SPAN class=keyword>function</SPAN><SPAN>(){
+	&nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jQuery.dequeue(&nbsp;</SPAN><SPAN
+		class=keyword>this</SPAN><SPAN>,&nbsp;type&nbsp;); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;}); &nbsp;&nbsp;</SPAN></LI>
+	<LI><SPAN>}&nbsp;&nbsp;</SPAN></LI>
+</OL>
+</DIV>
+<PRE style="DISPLAY: none" class=js name="code">	dequeue: function(type){
+		return this.each(function(){
+			jQuery.dequeue( this, type );
+		});
+	}</PRE>
+<P>&nbsp;</P>
+<P>在API文档中有可运行的demo，可以结合看看。</P>
+<P>&nbsp;</P>
+<P>同样，还是总结一下：</P>
+<P>&nbsp;</P>
+<P><IMG alt="" src="../../../img/files/jslib/fq2.gif"></P>
+</DIV>
+
+</body>
+</html>

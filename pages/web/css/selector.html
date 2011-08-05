@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CSS Selectors、Pseudo-Classes、Pseudo-Elements</title>
+        <style type=text/css>
+        	body {
+        		margin: 0;
+				padding: 0;
+        	}
+			#wrapper {
+				margin: 10px;
+			}
+			#title {
+				margin: 10px;
+				/*text-align: center;*/
+			}
+        	#wrapper table {
+        		width: 100%;
+        		border-collapse: collapse;
+        	}
+			#wrapper th {
+				background-color: gray;
+			}
+			#wrapper th, #wrapper td {
+				padding: 4px 4px 0 0;
+				border: 1px solid black;
+			}
+			.syntax {
+				color: green;
+			}
+			.even {
+				background-color: #e8f2fe;
+			}
+			.blank {
+				background-color: lightgray;
+			}
+			#title2 {
+				margin: 10px;
+				/*text-align: center;*/
+			}
+        </style>
+    </head>
+    <body>
+    	<div id="wrapper">
+	    	<div id="title"><h1>1、CSS Selectors</h1></div>
+			<table>
+				<tr>
+					<th>选择符</th>
+					<th>语法</th>
+					<th>版本</th>
+					<th>描述</th>
+				</tr>
+				<tr>
+					<td>ID选择符(ID Selectors)</td>
+					<td class="syntax">#sID</td>
+					<td>CSS1</td>
+					<td>以文档目录树（DOM）中作为对象的唯一标识符的ID作为选择</td>
+				</tr>
+				<tr class="even">
+					<td>类型选择符(Type Selectors)</td>
+					<td class="syntax">E1</td>
+					<td>CSS1</td>
+					<td>以文档语言对象类型作为选择符</td>
+				</tr>
+				<tr>
+					<td>类选择符(Class Selectors)</td>
+					<td class="syntax">E1.className</td>
+					<td>CSS1</td>
+					<td>在HTML中可以使用此种选择符。其效果等同于E1[class~=className]</td>
+				</tr>
+				<tr class="even">
+					<td>包含选择符(Descendant Selectors)</td>
+					<td class="syntax">E1 E2</td>
+					<td>CSS1</td>
+					<td>选择所有被E1包含的E2。即E1.contains(E2)==true</td>
+				</tr>
+				<tr>
+					<td>选择符分组(Grouping)</td>
+					<td class="syntax">E1,E2,E3</td>
+					<td>CSS1</td>
+					<td>将同样的定义应用于多个选择符，可以将选择符以逗号分隔的方式并为组</td>
+				</tr>
+				<tr class="blank">
+					<td colspan=4>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>通配选择符(Universal Selector)</td>
+					<td class="syntax">*</td>
+					<td>CSS2</td>
+					<td>选定文档目录树（DOM）中的所有类型的单一对象</td>
+				</tr>
+				<tr class="even">
+					<td>子对象选择符(Child Selectors)</td>
+					<td class="syntax">E1 > E2</td>
+					<td>CSS2</td>
+					<td>选择所有作为E1子对象的E2</td>
+				</tr>
+				<tr>
+					<td>相邻选择符(Adjacent Sibling Selectors)</td>
+					<td class="syntax">E1 + E2</td>
+					<td>CSS2</td>
+					<td>选择紧贴在对象E1之后的所有E2对象</td>
+				</tr>
+				<tr class="even">
+					<td>属性选择符(Attribute Selectors)</td>
+					<td class="syntax">E1[attr]</td>
+					<td>CSS2</td>
+					<td>选择具有attr属性的E1</td>
+				</tr>
+				<tr>
+					<td>属性选择符(Attribute Selectors)</td>
+					<td class="syntax">E1[attr=value]</td>
+					<td>CSS2</td>
+					<td>选择具有attr属性且属性值等于value的E1</td>
+				</tr>
+				<tr class="even">
+					<td>属性选择符(Attribute Selectors)</td>
+					<td class="syntax">E1[attr~=value]</td>
+					<td>CSS2</td>
+					<td>选择具有attr属性且属性值为一用空格分隔的字词列表，其中一个等于value的E1</td>
+				</tr>
+				<tr>
+					<td>属性选择符(Attribute Selectors)</td>
+					<td class="syntax">E1[attr|=value]</td>
+					<td>CSS2</td>
+					<td>选择具有attr属性且属性值为一用连字符分隔的字词列表，由value开始的E1</td>
+				</tr>
+				<tr class="blank">
+					<td colspan=4>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>子串匹配的属性选择符</td>
+					<td class="syntax">E[att^="val"]</td>
+					<td>CSS3</td>
+					<td>匹配具有att属性、且值以val开头的E元素</td>
+				</tr>
+				<tr class="even">
+					<td>子串匹配的属性选择符</td>
+					<td class="syntax">E[att$="val"]</td>
+					<td>CSS3</td>
+					<td>匹配具有att属性、且值以val结尾的E元素</td>
+				</tr>
+				<tr>
+					<td>子串匹配的属性选择符</td>
+					<td class="syntax">E[att*="val"]</td>
+					<td>CSS3</td>
+					<td>匹配具有att属性、且值中含有val的E元素</td>
+				</tr>
+				<tr class="even">
+					<td>结构性伪类</td>
+					<td class="syntax">E:root</td>
+					<td>CSS3</td>
+					<td>匹配文档的根元素。在HTML中，根元素永远是HTML</td>
+				</tr>
+				<tr>
+					<td>结构性伪类</td>
+					<td class="syntax">E:nth-child(n)</td>
+					<td>CSS3</td>
+					<td>匹配父元素中的第n个子元素E</td>
+				</tr>
+				<tr class="even">
+					<td>结构性伪类</td>
+					<td class="syntax">E:nth-last-child(n)</td>
+					<td>CSS3</td>
+					<td>匹配父元素中的倒数第n个结构子元素E</td>
+				</tr>
+				<tr>
+					<td>结构性伪类</td>
+					<td class="syntax">E:nth-of-type(n)</td>
+					<td>CSS3</td>
+					<td>匹配同类型中的第n个同级兄弟元素E</td>
+				</tr>
+				<tr class="even">
+					<td>结构性伪类</td>
+					<td class="syntax">E:nth-last-of-type(n)</td>
+					<td>CSS3</td>
+					<td>匹配同类型中的倒数第n个同级兄弟元素E</td>
+				</tr>
+				<tr>
+					<td>结构性伪类</td>
+					<td class="syntax">E:last-child</td>
+					<td>CSS3</td>
+					<td>匹配父元素中最后一个E元素</td>
+				</tr>
+				<tr class="even">
+					<td>结构性伪类</td>
+					<td class="syntax">E:first-of-type</td>
+					<td>CSS3</td>
+					<td>匹配同级兄弟元素中的第一个E元素</td>
+				</tr>
+				<tr>
+					<td>结构性伪类</td>
+					<td class="syntax">E:only-child</td>
+					<td>CSS3</td>
+					<td>匹配属于父元素中唯一子元素的E</td>
+				</tr>
+				<tr class="even">
+					<td>结构性伪类</td>
+					<td class="syntax">E:only-of-type</td>
+					<td>CSS3</td>
+					<td>匹配属于同类型中唯一兄弟元素的E</td>
+				</tr>
+				<tr>
+					<td>结构性伪类</td>
+					<td class="syntax">E:empty</td>
+					<td>CSS3</td>
+					<td>匹配没有任何子元素（包括text节点）的元素E</td>
+				</tr>
+				<tr class="even">
+					<td>目标伪类</td>
+					<td class="syntax">:target</td>
+					<td>CSS3</td>
+					<td>匹配相关URL指向的E元素</td>
+				</tr>
+				<tr>
+					<td>UI元素状态伪类</td>
+					<td class="syntax">E:enabled</td>
+					<td>CSS3</td>
+					<td>匹配所有用户界面（form表单）中处于可用状态的E元素</td>
+				</tr>
+				<tr class="even">
+					<td>UI元素状态伪类</td>
+					<td class="syntax">E:disabled</td>
+					<td>CSS3</td>
+					<td>匹配所有用户界面（form表单）中处于不可用状态的E元素</td>
+				</tr>
+				<tr>
+					<td>UI元素状态伪类</td>
+					<td class="syntax">E:checked</td>
+					<td>CSS3</td>
+					<td>匹配所有用户界面（form表单）中处于选中状态的元素E</td>
+				</tr>
+				<tr class="even">
+					<td>UI元素状态伪类</td>
+					<td class="syntax">E::selection</td>
+					<td>CSS3</td>
+					<td>匹配E元素中被用户选中或处于高亮状态的部分</td>
+				</tr>
+				<tr>
+					<td>否定伪类</td>
+					<td class="syntax">E:not(s)</td>
+					<td>CSS3</td>
+					<td>匹配所有不匹配简单选择符s的元素E</td>
+				</tr>
+				<tr class="even">
+					<td>通用兄弟元素选择器</td>
+					<td class="syntax">E ~ F</td>
+					<td>CSS3</td>
+					<td>匹配E元素之后的F元素</td>
+				</tr>
+				<tr class="blank">
+					<td colspan=4>&nbsp;</td>
+				</tr>
+			</table>
+			<br>
+	    	<div id="title2"><h1>2、CSS Pseudo-Classes</h1></div>
+			<table>
+				<tr>
+					<th>伪类</th>
+					<th>版本</th>
+					<th>描述</th>
+				</tr>
+				<tr>
+					<td class="syntax">:link</td>
+					<td>CSS1</td>
+					<td>设置a对象在未被访问前的样式表属性</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:visited</td>
+					<td>CSS1</td>
+					<td>设置a对象在其链接地址已被访问过时的样式表属性</td>
+				</tr>
+				<tr>
+					<td class="syntax">:hover</td>
+					<td>CSS1/CSS2</td>
+					<td>设置对象在其鼠标悬停时的样式表属性</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:active</td>
+					<td>CSS1/CSS2</td>
+					<td>设置对象在被用户激活（在鼠标点击与释放之间发生的事件）时的样式表属性</td>
+				</tr>
+				<tr>
+					<td class="syntax">:focus</td>
+					<td>CSS2</td>
+					<td>设置对象在成为输入焦点（该对象的onfocus事件发生）时的样式表属性</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:first-child</td>
+					<td>CSS2</td>
+					<td>设置对象（Selector1）的第一个子对象（Selector2）的样式表属性</td>
+				</tr>
+				<tr>
+					<td class="syntax">:first</td>
+					<td>CSS2</td>
+					<td>设置页面容器第一页使用的样式表属性。仅用于@page规则</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:left</td>
+					<td>CSS2</td>
+					<td>设置页面容器位于装订线左边的所有页面使用的样式表属性。仅用于@page规则</td>
+				</tr>
+				<tr>
+					<td class="syntax">:right</td>
+					<td>CSS2</td>
+					<td>设置页面容器位于装订线右边的所有页面使用的样式表属性。仅用于@page规则</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:lang</td>
+					<td>CSS2</td>
+					<td>设置对象使用特殊语言的内容样式表属性</td>
+				</tr>
+			</table>
+			<br>
+	    	<div id="title3"><h1>3、CSS Pseudo-Elements</h1></div>
+			<table>
+				<tr>
+					<th>伪对象</th>
+					<th>版本</th>
+					<th>描述</th>
+				</tr>
+				<tr>
+					<td class="syntax">:first-letter</td>
+					<td>CSS2</td>
+					<td>设置对象内的第一个字符的样式表属性</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:first-line</td>
+					<td>CSS2</td>
+					<td>设置对象内的第一行的样式表属性</td>
+				</tr>
+				<tr>
+					<td class="syntax">:before</td>
+					<td>CSS2</td>
+					<td>用来和content属性一起使用，设置在对象前（依据对象树的逻辑结构）发生的内容</td>
+				</tr>
+				<tr class="even">
+					<td class="syntax">:after</td>
+					<td>CSS2</td>
+					<td>用来和content属性一起使用，设置在对象后（依据对象树的逻辑结构）发生的内容</td>
+				</tr>
+			</table>
+			<br>
+			<br>
+		</div>
+    </body>
+</html>
