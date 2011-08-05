@@ -85,6 +85,21 @@ body {
 	background: url(../img/fav/my_fav.jpg) 25px 0px no-repeat;
 }
 
+#mailto {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+#mailto a {
+	text-decoration: none;
+}
+
+#mailto a:hover {
+	color: red;
+	text-decoration: underline;
+}
+
 #channel {
 	position: absolute;
 	text-align: left;
