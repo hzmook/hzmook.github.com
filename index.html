@@ -1,12 +1,111 @@
-﻿<!doctype html>
-<html>
-    <head>
-        <title>hzmook</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <script type="text/javascript">
-            document.write('<p>Hello, github!</p>');
-        </script>
-    <body>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>我的收藏</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="css/main.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/lib/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="js/fav/NavConfig.js"></script>
+		<script type="text/javascript">
+			jQuery( function($) {
+				var navConfig = getNavConfig();
+				var htmlCache = {};
+
+				// 生成导航菜单
+				var items = [];
+				for (var key in navConfig) {
+					items.push('<li><a href="#" key="' + key + '">' + key + '</a></li>');
+				}
+				$('#nav').html(items.join(''));
+				$('#nav li').last().addClass('last');
+
+				// 导航菜单项点击事件处理
+				$('#nav a').click( function(ev) {
+					var k1 = $('#nav a.selected').attr('key');
+					if (k1 && !htmlCache[k1]) {
+						htmlCache[k1] = $('#sub').html();
+					}
+					$('#nav a.selected').removeClass('selected');
+					$(this).addClass('selected');
+					var k2 = $(this).attr('key');
+					var cached = !!htmlCache[k2];
+					
+					if (cached) {
+						$('#sub').html(htmlCache[k2]);
+					} else {
+						// 生成二级导航菜单
+						var htmls = [];
+						var channel = navConfig[k2];
+						for (var p in channel) {
+							htmls.push('<dt>' + p + '</dt>');
+							var list = channel[p];
+							if (!list || !list.length) continue;
+							for (var i = 0; i < list.length; i++) {
+								var title = list[i].title || 'NoTitle';
+								var href = list[i].href || '#';
+								htmls.push('<dd><a href="' + href + '">' + title + '</a></dd>');
+							}
+						}
+						$('#sub').html(htmls.join(''));
+					}
+
+					// 二级导航菜单项点击事件处理
+					$('#sub a').click( function(e) {
+						$('#sub a.selected').removeClass('selected');
+						$(this).addClass('selected');
+						$('.main iframe').attr('src', this.href);
+						e.preventDefault();
+					});
+
+					if (cached) {
+						$('#sub a.selected').click();
+					} else {
+						// 默认选中第一个二级导航菜单项
+						$('#sub a').first().click();
+					}
+					
+					ev.preventDefault();
+				});
+
+				// 默认选中第一个导航菜单项
+				$('#nav a').first().click();
+
+				//
+				$('body').keydown(function(ev){
+					var code = 113; //F2 key
+					if ( ev && ev.ctrlKey && ev.keyCode == code) { // Ctrl + F2
+						$('div.part').filter(function(index) {
+							var isMain = $(this).hasClass('main');
+							if (isMain) {
+								$(this).toggleClass('max');
+							}
+							return !isMain;
+						}).toggleClass('hidden');
+					}
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div class="top part" id="head">
+			<div id="logo">
+			</div>
+			<div id="channel">
+			  <div class="wrapper">
+			    <ul id="nav">
+			    </ul>
+			  </div>
+			</div>
+		</div>
+		<div class="side part" id="side">
+			<dl id="sub">
+			</dl>
+		</div>
+		<div class="main part" id="main">
+			<iframe frameborder="0" src=""></iframe>
+		</div>
+		<div class="bottom part" id="foot">
+			<span>Copyright © 2010-2020 hzmook. All rights reserved.</span>
+		</div>
+	</body>
 </html>
