@@ -1,2 +1,5 @@
-[2011-1-24]
-Thanks github.com!
+## [2011-08-05]
+add .gitignore
+
+## [2011-01-24]
+init hzmook.github.com
