@@ -1,0 +1,8 @@
+---
+title: About
+layout: master
+---
+
+h2. About me
+
+This guy is very lazy ~
