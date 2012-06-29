@@ -1,0 +1,8 @@
+---
+layout: post
+title: "hello"
+---
+
+Congratulation! It works.
+
+Thanks github, jekyll, etc.
