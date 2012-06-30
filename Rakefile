@@ -1,4 +1,4 @@
-﻿require 'rubygems'
+require 'rubygems'
 require 'rake'
 require 'open-uri'
 require 'multi_json'
@@ -8,7 +8,7 @@ require 'date'
 
 class Post < Hashie::Mash
   def date
-    d=Date._strptime(self['date'],"%m/%d, %Y %H:%M")
+    d=Date._strptime(self['date'],"%m月 %d, %Y %H:%M")
     Time.utc(d[:year], d[:mon], d[:mday], d[:hour], d[:min], 
          d[:sec], d[:sec_fraction], d[:zone])
   end

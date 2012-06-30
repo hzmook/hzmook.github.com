@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title>HZMOOK - {{ page.title }}</title>
+    <title>hzmook - {{ page.title }}</title>
+    <link rel="shortcut icon" href="favicon.ico" />
     <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
     <link rel="stylesheet" href="/stylesheets/syntax.css" type="text/css" media="screen" charset="utf-8"/>
     <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
@@ -13,13 +14,15 @@
   <body>
     <div id='wrapper'>
       <div id='header'>
-        <h1><a href='/' title='Home'>HZMO OK</a></h1>
+        <h1><a href='/'>hzmook</a></h1>
         
         <div id='menu'>
           <ul>
-            <li><a href='/blog.html' id='blog_link' title='Blog'>Blog</a></li>
-            <li><a href='/about.html' id='about_link' title='About'>About</a></li>
-            <li><a href='http://github.com/hzmook' target='_blank' title='GitHub' rel='me' id='github_link'>GitHub</a></li>
+            <li><a href='/' id='home-link' title='首页'>首页</a></li>
+            <li><a href='/blog.html' id='blog-link' title='博客'>博客</a></li>
+            <li><a href='/docs.html' id='docs-link' title='文档'>文档</a></li>
+            <li><a href='/about.html' id='about-link' title='关于'>关于</a></li>
+            <li><a href='http://github.com/hzmook' target='_blank' title='GitHub' rel='me' id='github-link'>GitHub</a></li>
           </ul>
         </div>
       </div>
@@ -31,8 +34,8 @@
     <div id='footer'>
       Copyright &copy; 2012 hzmook. Hosted by <a href='http://github.com/hzmook/hzmook.github.com/' target='_blank'>GitHub</a> and powered by <a href='http://github.com/mojombo/jekyll'>Jekyll</a>. Templates from <a href='http://github.com/mbleigh/mbleigh.github.com/' target='_blank'>Michael Bleigh</a>.
     </div>
+
     <script type="text/javascript">
-    //<![CDATA[
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hzmook'; // required: replace example with your forum shortname
     
@@ -43,7 +46,7 @@
             s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
             (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
         }());
-    //]]>
     </script>
+    
   </body>
 </html>

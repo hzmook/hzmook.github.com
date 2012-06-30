@@ -1,4 +1,4 @@
-﻿---
+---
 layout: nil
 ---
 <?xml version="1.0" encoding="utf-8"?>
@@ -14,7 +14,7 @@ layout: nil
    <email>hzmook@gmail.com</email>
  </author>
  
- {% for post in site.posts %}
+ {% for post in site.posts limit:15 %}
  <entry>
    <title>{{ post.title }}</title>
    <link href="http://hzmook.github.com{{ post.url }}"/>
