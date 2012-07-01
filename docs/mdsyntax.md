@@ -41,6 +41,7 @@ title: "Markdown 语法"
     *   [反斜杠](#backslash)
     *   [自动链接](#autolink)
 *   [感谢](#acknowledgement)
+*   [CheetSheet](#cheetsheet)
 
 * * *
 
@@ -725,7 +726,7 @@ Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的�
 
 - - -
 
-### Markdown CheetSheet
+<h3 id="cheetsheet">CheetSheet</h3>
 
 ![Markdown CheetSheet](/images/docs/mdcheatsheet.png)
 
