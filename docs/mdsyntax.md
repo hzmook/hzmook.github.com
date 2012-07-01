@@ -3,8 +3,7 @@ layout: master
 title: "Markdown 语法"
 ---
 
-Markdown 语法说明 (简体中文版)
-================
+## Markdown 语法说明 (简体中文版)
 
 **NOTE:** This is Simplelified  Chinese Edition Document of Markdown Syntax. If you are seeking for English Edition Document. Please refer to [Markdown: Syntax][eng-doc].
 
@@ -20,7 +19,7 @@ Markdown 语法说明 (简体中文版)
   [g]: http://gitcafe.com/riku/Markdown-Syntax-CN
   [Github]: https://github.com/riku/Markdown-Syntax-CN
 
-<h2 id="catalog">目录</h2>
+<h3 id="catalog">目录</h3>
 
 *   [概述](#overview)
     *   [宗旨](#philosophy)
@@ -45,9 +44,9 @@ Markdown 语法说明 (简体中文版)
 
 * * *
 
-<h2 id="overview">概述</h2>
+<h3 id="overview">概述</h3>
 
-<h3 id="philosophy">宗旨</h3>
+<h4 id="philosophy">宗旨</h4>
 
 Markdown 的目标是实现「易读易写」。
 
@@ -62,7 +61,7 @@ Markdown 的目标是实现「易读易写」。
 
 总之， Markdown 的语法全由一些符号所组成，这些符号经过精挑细选，其作用一目了然。比如：在文字两旁加上星号，看起来就像\*强调\*。Markdown 的列表看起来，嗯，就是列表。Markdown 的区块引用看起来就真的像是引用一段文字，就像你曾在电子邮件中见过的那样。
 
-<h3 id="html">兼容 HTML</h3>
+<h4 id="html">兼容 HTML</h4>
 
 Markdown 语法的目标是：成为一种适用于网络的*书写*语言。
 
@@ -90,7 +89,7 @@ HTML 的区段（行内）标签如 `<span>`、`<cite>`、`<del>` 可以在 Mark
 
 和处在 HTML 区块标签间不同，Markdown 语法在 HTML 区段标签间是有效的。
 
-<h3 id="autoescape">特殊字符自动转换</h3>
+<h4 id="autoescape">特殊字符自动转换</h4>
 
 在 HTML 文件中，有两个字符需要特殊处理： `<` 和 `&` 。 `<` 符号用于起始标签，`&` 符号则用于标记 HTML 实体，如果你只是想要显示这些字符的原型，你必须要使用实体的形式，像是 `&lt;` 和 `&amp;`。
 
@@ -130,10 +129,10 @@ Markdown 将会把它转换为：
 
 * * *
 
-<h2 id="block">区块元素</h2>
+<h3 id="block">区块元素</h3>
 
 
-<h3 id="p">段落和换行</h3>
+<h4 id="p">段落和换行</h4>
 
 一个 Markdown 段落是由一个或多个连续的文本行组成，它的前后要有一个以上的空行（空行的定义是显示上看起来像是空的，便会被视为空行。比方说，若某一行只包含空格和制表符，则该行也会被视为空行）。普通段落不该用空格或制表符来缩进。
 
@@ -146,7 +145,7 @@ Markdown 将会把它转换为：
   [bq]: #blockquote
   [l]:  #list
 
-<h3 id="headers">标题</h3>
+<h4 id="headers">标题</h4>
 
 Markdown 支持两种标题的语法，类 [Setext] [1] 和类 [atx] [2] 形式。
 
@@ -177,7 +176,7 @@ Markdown 支持两种标题的语法，类 [Setext] [1] 和类 [atx] [2] 形式�
     ### 这是 H3 ######
 
 
-<h3 id="blockquote">区块引用 Blockquotes</h3>
+<h4 id="blockquote">区块引用 Blockquotes</h4>
 
 Markdown 标记区块引用是使用类似 email 中用 `>` 的引用方式。如果你还熟悉在 email 信件中的引言部分，你就知道怎么在 Markdown 文件中建立一个区块引用，那会看起来像是你自己先断好行，然后在每行的最前面加上 `>` ：
 
@@ -218,7 +217,7 @@ Markdown 也允许你偷懒只在整个段落的第一行最前面加上 `>` ：
 
 任何像样的文本编辑器都能轻松地建立 email 型的引用。例如在 BBEdit 中，你可以选取文字后然后从选单中选择*增加引用阶层*。
 
-<h3 id="list">列表</h3>
+<h4 id="list">列表</h4>
 
 Markdown 支持有序列表和无序列表。
 
@@ -358,7 +357,7 @@ Markdown 支持有序列表和无序列表。
 
     1986\. What a great season.
 
-<h3 id="precode">代码区块</h3>
+<h4 id="precode">代码区块</h4>
 
 和程序相关的写作或是标签语言原始码通常会有已经排版好的代码区块，通常这些区块我们并不希望它以一般段落文件的方式去排版，而是照原来的样子显示，Markdown 会用 `<pre>` 和 `<code>` 标签来把代码区块包起来。
 
@@ -409,7 +408,7 @@ Markdown 会转换成：
 
 代码区块中，一般的 Markdown 语法不会被转换，像是星号便只是星号，这表示你可以很容易地以 Markdown 语法撰写 Markdown 语法相关的文件。
 
-<h3 id="hr">分隔线</h3>
+<h4 id="hr">分隔线</h4>
 
 你可以在一行中用三个以上的星号、减号、底线来建立一个分隔线，行内不能有其他东西。你也可以在星号或是减号中间插入空格。下面每种写法都可以建立分隔线：
 
@@ -426,9 +425,9 @@ Markdown 会转换成：
 
 * * *
 
-<h2 id="span">区段元素</h2>
+<h3 id="span">区段元素</h3>
 
-<h3 id="link">链接</h3>
+<h4 id="link">链接</h4>
 
 Markdown 支持两种形式的链接语法： *行内式*和*参考式*两种形式。
 
@@ -549,7 +548,7 @@ Markdown 支持两种形式的链接语法： *行内式*和*参考式*两种形
 
 使用 Markdown 的参考式链接，可以让文件更像是浏览器最后产生的结果，让你可以把一些标记相关的元数据移到段落文字之外，你就可以增加链接而不让文章的阅读感觉被打断。
 
-<h3 id="em">强调</h3>
+<h4 id="em">强调</h4>
 
 Markdown 使用星号（`*`）和底线（`_`）作为标记强调字词的符号，被 `*` 或 `_` 包围的字词会被转成用 `<em>` 标签包围，用两个 `*` 或 `_` 包起来的话，则会被转成 `<strong>`，例如：
 
@@ -583,7 +582,7 @@ Markdown 使用星号（`*`）和底线（`_`）作为标记强调字词的符�
 
     \*this text is surrounded by literal asterisks\*
 
-<h3 id="code">代码</h3>
+<h4 id="code">代码</h4>
 
 如果要标记一小段行内代码，你可以用反引号把它包起来（`` ` ``），例如：
 
@@ -632,7 +631,7 @@ Markdown 使用星号（`*`）和底线（`_`）作为标记强调字词的符�
 
 
 
-<h3 id="img">图片</h3>
+<h4 id="img">图片</h4>
 
 很明显地，要在纯文字应用中设计一个「自然」的语法来插入图片是有一定难度的。
 
@@ -663,9 +662,9 @@ Markdown 使用一种和链接很相似的语法来标记图片，同样也允�
 
 * * *
 
-<h2 id="misc">其它</h2>
+<h3 id="misc">其它</h3>
 
-<h3 id="autolink">自动链接</h3>
+<h4 id="autolink">自动链接</h4>
 
 Markdown 支持以比较简短的自动链接形式来处理网址和电子邮件信箱，只要是用方括号包起来， Markdown 就会自动把它转成链接。一般网址的链接文字就和链接地址一样，例如：
 
@@ -690,7 +689,7 @@ Markdown 会转成：
 
 （这种作法虽然可以糊弄不少的机器人，但并不能全部挡下来，不过总比什么都不做好些。不管怎样，公开你的信箱终究会引来广告信件的。）
 
-<h3 id="backslash">反斜杠</h3>
+<h4 id="backslash">反斜杠</h4>
 
 Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如：如果你想要用星号加在文字旁边的方式来做出强调效果（但不用 `<em>` 标签），你可以在星号的前面加上反斜杠：
 
@@ -711,7 +710,7 @@ Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的�
     .   英文句点
     !   惊叹号
 
-<h2 id="acknowledgement">感谢</h2>
+<h3 id="acknowledgement">感谢</h3>
 
 感谢 [leafy7382][] 协助翻译，[hlb][]、[Randylien][] 帮忙润稿，[ethantw][] 的[汉字标准格式・CSS Reset][]， [WM][] 回报文字错误。
 
@@ -726,7 +725,7 @@ Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的�
 
 - - -
 
-###Markdown CheetSheet
+### Markdown CheetSheet
 
 ![Markdown CheetSheet](/images/docs/mdcheatsheet.png)
 

@@ -3,14 +3,14 @@ layout: master
 title: "JavaScript正则表达式"
 ---
 
-JavaScript正则表达式
+## JavaScript正则表达式
 ================
 
 **NOTE:** 在正则表达式中，许多标点符号具有特殊的含义。它们是：
 <pre><code>^ $ . * + ? = ! : | \ / ( ) [ ] { }</code></pre>
   
 <br>
-## 正则表达式的直接量字符
+### 正则表达式的直接量字符
 
 <table border="1" style="width:100%;">
 	<tbody>
@@ -29,7 +29,7 @@ JavaScript正则表达式
 </table>
   
 <br>
-## 正则表达式的字符类
+### 正则表达式的字符类
 
 <table border="1" style="width:100%;">
 	<tbody>
@@ -48,7 +48,7 @@ JavaScript正则表达式
 </table>
   
 <br>
-## 正则表达式的重复字符
+### 正则表达式的重复字符
 
 <table border="1" style="width:100%;">
 	<tbody>
@@ -63,7 +63,7 @@ JavaScript正则表达式
 </table>
   
 <br>
-## 正则表达式的选择、分组和引用字符
+### 正则表达式的选择、分组和引用字符
 
 <table border="1" style="width:100%;">
 	<tbody>
@@ -76,7 +76,7 @@ JavaScript正则表达式
 </table>
   
 <br>
-## 正则表达式的锚字符
+### 正则表达式的锚字符
 
 <table border="1" style="width:100%;">
 	<tbody>
@@ -91,7 +91,7 @@ JavaScript正则表达式
 </table>
   
 <br>
-## 正则表达式的标志
+### 正则表达式的标志
 
 <table border="1" style="width:100%;">
 	<tbody>
