@@ -13,8 +13,10 @@
     <script src="http://mismo.github.com/js/ga.js" type="text/javascript" id="UA-31635531-1"></script>
   </head>
   <body>
+  	<div id='top-place' class='fix-top'><a id='top-link'></a></div>
     <div id='wrapper'>
-      <div id='header'>
+    	<a id='gotop' onclick='window.scrollTo(0,0);this.style.visibility="hidden";'></a>
+      <div id='header' class='fix-top'>
         <h1><a href='/'>hzmook</a></h1>
         
         <div id='menu'>
@@ -37,6 +39,19 @@
     </div>
 
     <script type="text/javascript">
+    		var topElem = document.getElementById('gotop');
+    		window.onscroll = function(ev) {
+    			if (document.body.scrollTop > 300) {
+    				if (topElem.style.visibility != 'visible') {
+    					topElem.style.visibility = 'visible';
+    				}
+    			} else {
+    				if (topElem.style.visibility == 'visible') {
+    					topElem.style.visibility = 'hidden';
+    				}
+    			}
+    		};
+    		
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hzmook'; // required: replace example with your forum shortname
     
