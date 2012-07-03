@@ -39,15 +39,16 @@
     </div>
 
     <script type="text/javascript">
-    		var topElem = document.getElementById('gotop');
+    		var btnTop = document.getElementById('gotop');
     		window.onscroll = function(ev) {
-    			if (document.body.scrollTop > 300) {
-    				if (topElem.style.visibility != 'visible') {
-    					topElem.style.visibility = 'visible';
+    			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    			if (scrollTop > 300) {
+    				if (btnTop.style.visibility != 'visible') {
+    					btnTop.style.visibility = 'visible';
     				}
     			} else {
-    				if (topElem.style.visibility == 'visible') {
-    					topElem.style.visibility = 'hidden';
+    				if (btnTop.style.visibility == 'visible') {
+    					btnTop.style.visibility = 'hidden';
     				}
     			}
     		};
