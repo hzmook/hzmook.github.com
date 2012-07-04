@@ -26,20 +26,6 @@ a:visited {
 	z-index: 100;
 }
 
-#gotop {
-	width: 54px;
-	height: 54px;
-	background: url(/images/gotop.png) no-repeat scroll 0 0;
-	cursor: pointer;
-	display: block;
-	position: fixed;
-	_position: absolute;
-	right: 15px;
-	bottom: 10px;
-	z-index: 10;
-	visibility: hidden;
-}
-
 #top-place {
 	height: 150px;
 	background: white url(/images/header_bg.gif) repeat-x top fixed;

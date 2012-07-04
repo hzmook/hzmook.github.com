@@ -8,14 +8,14 @@
     <link rel="shortcut icon" href="/images/favicon.ico" />
     <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" media="screen" charset="utf-8"/>
     <link rel="stylesheet" href="/stylesheets/syntax.css" type="text/css" media="screen" charset="utf-8"/>
+    <link rel="stylesheet" href="/stylesheets/dynamic-to-top.css" type="text/css" media="screen" charset="utf-8"/>
     <script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
     <script src="/javascripts/jquery.github.js" type="text/javascript" charset="utf-8"></script>
     <script src="http://mismo.github.com/js/ga.js" type="text/javascript" id="UA-31635531-1"></script>
   </head>
   <body>
-  	<div id='top-place' class='fix-top'><a id='top-link'></a></div>
+  	<div id='top-place' class='fix-top'></div>
     <div id='wrapper'>
-    	<a id='gotop' onclick='window.scrollTo(0,0);this.style.visibility="hidden";'></a>
       <div id='header' class='fix-top'>
         <h1><a href='/'>hzmook</a></h1>
         
@@ -37,22 +37,26 @@
     <div id='footer'>
       Copyright &copy; 2012 hzmook. Hosted by <a href='http://github.com/hzmook/hzmook.github.com/' target='_blank'>GitHub</a> and powered by <a href='http://github.com/mojombo/jekyll'>Jekyll</a>. Templates from <a href='http://github.com/mbleigh/mbleigh.github.com/' target='_blank'>Michael Bleigh</a>.
     </div>
+    
+	<script type="text/javascript" src="/javascripts/jquery.easing.js"></script>
+    <script type="text/javascript">
+		var mv_dynamic_to_top = {
+			id: 'dynamic-to-top',
+			version: '',
+			text: '回顶部',
+			easing: 'easeInExpo',
+			fade_in: 600,
+			fade_out: 400,
+			margin: 20,
+			min: 300,
+			speed: 1100
+		};
+	</script>
+	<script type="text/javascript" src="/javascripts/dynamic.to.top.js?ver=3.3.1"></script>
 
     <script type="text/javascript">
-    		var btnTop = document.getElementById('gotop');
-    		window.onscroll = function(ev) {
-    			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    			if (scrollTop > 300) {
-    				if (btnTop.style.visibility != 'visible') {
-    					btnTop.style.visibility = 'visible';
-    				}
-    			} else {
-    				if (btnTop.style.visibility == 'visible') {
-    					btnTop.style.visibility = 'hidden';
-    				}
-    			}
-    		};
-    		
+		$('#' + mv_dynamic_to_top.id).attr('title', mv_dynamic_to_top.text);
+
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hzmook'; // required: replace example with your forum shortname
     
