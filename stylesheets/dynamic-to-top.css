@@ -1,0 +1,95 @@
+body {
+	position: relative;
+}
+
+#dynamic-to-top {
+	display: none;
+	overflow: hidden;
+	width: auto;
+	z-index: 90;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	top: auto;
+	left: auto;
+	font-family: sans-serif;
+	font-size: 1em;
+	color: #fff;
+	text-decoration: none;
+	padding: 21px 19px;
+	border: 1px solid #B8B8B8;
+	background: #B8B8B8;
+	-webkit-background-origin: border;
+	-moz-background-origin: border;
+	-icab-background-origin: border;
+	-khtml-background-origin: border;
+	-o-background-origin: border;
+	background-origin: border;
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding-box;
+	-icab-background-clip: padding-box;
+	-khtml-background-clip: padding-box;
+	-o-background-clip: padding-box;
+	background-clip: padding-box;
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	-icab-border-radius: 9px;
+	-khtml-border-radius: 9px;
+	border-radius: 9px;
+}
+
+#dynamic-to-top:hover {
+	background: #54d4a7;
+	background: #578123
+		-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, .2)
+		), to(rgba(0, 0, 0, 0) ) );
+	background: #578123 -webkit-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 -khtml-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 -moz-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 -o-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 -ms-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 -icab-linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	background: #578123 linear-gradient(top, rgba(255, 255, 255, .2),
+		rgba(0, 0, 0, 0) );
+	cursor: pointer;
+}
+
+#dynamic-to-top:active {
+	background: #B8B8B8;
+	background: #B8B8B8
+		-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0, 0, 0, .3) ),
+		to(rgba(0, 0, 0, 0) ) );
+	background: #B8B8B8 -webkit-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 -moz-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 -khtml-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 -o-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 -ms-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 -icab-linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+	background: #B8B8B8 linear-gradient(top, rgba(0, 0, 0, .1),
+		rgba(0, 0, 0, 0) );
+}
+
+#dynamic-to-top,#dynamic-to-top:active,#dynamic-to-top:focus,#dynamic-to-top:hover
+	{
+	outline: none;
+}
+
+#dynamic-to-top span {
+	display: block;
+	overflow: hidden;
+	width: 14px;
+	height: 12px;
+	background: url(/images/up.png) no-repeat center center;
+}
